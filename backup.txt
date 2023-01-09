@@ -1,0 +1,300 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <queue>
+using namespace std;
+
+// Functions
+
+void Binary_Search_Tree();
+bool Load_100_Records();
+
+// Structure for node
+struct node
+{
+    /* data */
+    string index;
+    string Customer_Id;
+    string First_Name;
+    string Last_Name;
+    string Company;
+    string City;
+    string Country;
+    string Phone_1;
+    string Phone_2;
+    string Email;
+    string Subscription_Date;
+    string Website;
+    node *left, *right;
+
+    void setleft(node *left) { left = left; }
+    void setright(node *right) { right = right; }
+    node *getleft() { return left; }
+    node *getright() { return right; }
+
+    node()
+    {
+        // default constructor
+    }
+
+    node(string index, string Customer_Id, string First_Name, string Last_Name, string Company, string City, string Country,
+         string Phone_1, string Phone_2, string Email, string Subscription_Date, string Website)
+    {
+        index = index;
+        Customer_Id = Customer_Id;
+        First_Name = First_Name;
+        Last_Name = Last_Name;
+        Company = Company;
+        City = City;
+        Country = Country;
+        Phone_1 = Phone_1;
+        Phone_2 = Phone_2;
+        Email = Email;
+        Subscription_Date = Subscription_Date;
+        Website = Website;
+        left = NULL;
+        right = NULL;
+    }
+};
+
+class Customers
+{
+     node *root;
+
+public:
+    void addNode(string index, string Customer_Id, string First_Name, string Last_Name, string Company, string City, string Country,
+                  string Phone_1, string Phone_2, string Email, string Subscription_Date, string Website)
+    {
+        node *newnNode = new node();
+        newnNode->index = index;
+        newnNode->Customer_Id = Customer_Id;
+        newnNode->First_Name = First_Name;
+        newnNode->Last_Name = Last_Name;
+        newnNode->Company = Company;
+        newnNode->City = City;
+        newnNode->Country = Country;
+        newnNode->Phone_1 = Phone_1;
+        newnNode->Phone_2 = Phone_2;
+        newnNode->Email = Email;
+        newnNode->Subscription_Date = Subscription_Date;
+        newnNode->Website = Website;
+        newnNode->setleft(NULL);
+        newnNode->setright(NULL);
+        return newnNode;
+    }
+
+    bool insert(node *n)
+    {
+        node *prev = root;
+        node *next = root;
+        if (root == NULL)
+        {
+            root = n;
+            return false;
+        }
+        while ( n->index != prev->index && next != NULL)
+        {
+            prev = next;
+            if (n->index < prev->index)
+                next = prev->left;
+            else
+                next = prev->right;
+        }
+        if (n->index == prev->index)
+        {
+            delete n;
+            return true;
+        }
+        else if (n->index > prev->index)
+            prev->right = n;
+        else
+            prev->left = n;
+        return false;
+    }
+
+    string passRecord(string rec, int field)
+    {
+        string item = "";
+        int coma = 1;
+        for (int i = 0; i < rec.length(); i++)
+        {
+            if (rec[i] == ',')
+            {
+                coma++;
+            }
+            else if (coma == field)
+            {
+                item = item + rec[i];
+            }
+        }
+
+        return item;
+    }
+
+    bool loadData()
+    {
+        string index;
+        string Customer_Id;
+        string First_Name;
+        string Last_Name;
+        string Company;
+        string City;
+        string Country;
+        string Phone_1;
+        string Phone_2;
+        string Email;
+        string Subscription_Date;
+        string Website;
+        fstream file;
+        file.open("customers-100.csv");
+        int count = 0;
+
+        if (file.is_open())
+        {
+            string line = "";
+            while (getline(file, line))
+            {
+                index = passRecord(line, 0);
+                Customer_Id = passRecord(line, 1);
+                First_Name = passRecord(line, 2);
+                Last_Name = passRecord(line, 3);
+                Company = passRecord(line, 4);
+                City = passRecord(line, 5);
+                Country = passRecord(line, 6);
+                Phone_1 = passRecord(line, 7);
+                Phone_2 = passRecord(line, 8);
+                Email = passRecord(line, 9);
+                Subscription_Date = passRecord(line, 10);
+                Website = passRecord(line, 10);
+
+                 addNode(index, Customer_Id, First_Name, Last_Name, Company, City, Country,
+                                  Phone_1, Phone_2, Email, Subscription_Date, Website);
+                // cout << index << " " << Customer_Id << " " << First_Name << " " << Last_Name << " " << Company << " " << City << " " << Country << " " << Phone_1 << " " << Phone_2 << " " << Email << " " << Subscription_Date << " " << Website << endl;
+            }
+            return true;
+        }
+        else return false;
+    }
+
+
+    void display()
+    {
+        if (root != NULL)
+        {
+            queue<node *> q;
+            q.push(root);
+
+            while (!q.empty())
+            {
+                cout << "ok" << endl;
+                node *temp1 = q.front();
+                q.pop();
+
+                cout << temp1->index;
+                // cout << temp1->Customer_Id;
+                // cout << temp1->First_Name;
+                // cout << temp1->Last_Name;
+                // cout << temp1->Company;
+                // cout << temp1->City;
+                // cout << temp1->Country;
+                // cout << temp1->Phone_1;
+                // cout << temp1->Phone_2;
+                // cout << temp1->Email;
+                // cout << temp1->Subscription_Date;
+                // cout << temp1->Website;
+
+                if (temp1->getleft() != NULL)
+                    q.push(temp1->getleft());
+                if (temp1->getright() != NULL)
+                    q.push(temp1->getright());
+            }
+        }
+        else
+            cout << "No record Yet" << endl;
+    }
+
+}; // Ending of class Customer
+
+int option_For_1st_menu_Function()
+{
+    cout << "1. Binary Tree Search" << endl;
+    cout << "2. AVL Tree" << endl;
+    cout << "3. Exit" << endl;
+    int opt;
+    cout << "Enter your option :";
+    cin >> opt;
+    return opt;
+}
+
+void systemCLS()
+{
+    cout << "Press Any Key to continue.....";
+    char opt;
+    cin >> opt;
+    system("CLS");
+}
+
+int menu_for_BST_function()
+{
+    cout << "1. Load 100 Records" << endl;
+    cout << "2. Load 1000 Records" << endl;
+    cout << "3. Load 10000 Records" << endl;
+    cout << "4. Load 100000 Records" << endl;
+    cout << "0. Exit" << endl;
+
+    cout << "Enter your option :";
+    int opt;
+    cin >> opt;
+    return opt;
+}
+
+int main()
+{
+    int option_For_1st_menu;
+    do
+    {
+        /* code */
+        option_For_1st_menu = option_For_1st_menu_Function();
+        if (option_For_1st_menu == 1)
+        {
+            Binary_Search_Tree();
+            systemCLS();
+        }
+        if (option_For_1st_menu == 2)
+        {
+            // AVL_Tree();
+            // systemCLS();
+        }
+
+    } while (option_For_1st_menu != 3);
+
+    return 0;
+}
+
+void Binary_Search_Tree()
+{
+    Customers c;
+    int menu_for_BST;
+    do
+    {
+        /* code */
+        menu_for_BST = menu_for_BST_function();
+        if (menu_for_BST == 1)
+        {
+            if (Load_100_Records())
+            {
+                cout << "Data Load Successfully...:)" << endl;
+                cout << "\n\n";
+                
+            }
+            else
+                "Sorry....:(";
+        }
+    } while (menu_for_BST != 0);
+}
+
+bool Load_100_Records()
+{
+    Customers c;
+    return c.loadData() ? true : false;
+}
